@@ -87,56 +87,11 @@ function addEvents() {
     clearCart_btn.addEventListener("click", handle_clearCart);
   }
 
-  // Product Description Hover
-  document.querySelectorAll(".product-box").forEach((box) => {
-    let desc = box.querySelector(".product-description");
-
-    // Show on hover
-    box.addEventListener("mouseenter", () => {
-      if (desc.style.display !== "block") {
-        desc.style.display = "block";
-        setTimeout(() => {
-          desc.style.opacity = "1";
-          desc.style.transform = "translateY(0)";
-        }, 10);
-      }
-    });
-
-    // Hide on mouse leave (only if not toggled open)
-    box.addEventListener("mouseleave", () => {
-      if (!box.classList.contains("desc-open")) {
-        desc.style.opacity = "0";
-        desc.style.transform = "translateY(10px)";
-        setTimeout(() => {
-          desc.style.display = "none";
-        }, 300);
-      }
-    });
-
-    // Toggle on click (anywhere except the add-to-cart button)
-    box.addEventListener("click", (e) => {
-      // Don't toggle if clicking the add-to-cart button
-      if (!e.target.closest(".add-cart")) {
-        if (box.classList.contains("desc-open")) {
-          // Hide description
-          desc.style.opacity = "0";
-          desc.style.transform = "translateY(10px)";
-          setTimeout(() => {
-            desc.style.display = "none";
-          }, 300);
-          box.classList.remove("desc-open");
-        } else {
-          // Show description
-          desc.style.display = "block";
-          setTimeout(() => {
-            desc.style.opacity = "1";
-            desc.style.transform = "translateY(0)";
-          }, 10);
-          box.classList.add("desc-open");
-        }
-      }
-    });
-  });
+  // Apply promo code
+  const applyPromoBtn = document.getElementById("apply-promo-btn");
+  if (applyPromoBtn) {
+    applyPromoBtn.addEventListener("click", applyPromoCode);
+  }
 }
 
 // ============= HANDLE EVENTS FUNCTIONS =============
@@ -214,17 +169,65 @@ function handle_clearCart() {
 function updateTotal() {
   let cartBoxes = document.querySelectorAll(".cart-box");
   const totalElement = cart.querySelector(".total-price");
-  let total = 0;
+  let subtotal = 0;
+
+  // Calculate subtotal
   cartBoxes.forEach((cartBox) => {
     let priceElement = cartBox.querySelector(".cart-price");
     let price = parseFloat(priceElement.innerHTML.replace("$", ""));
     let quantity = cartBox.querySelector(".cart-quantity").value;
-    total += price * quantity;
+    subtotal += price * quantity;
   });
 
-  // Keep 2 digits after the decimal point
-  totalElement.innerHTML = `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  totalElement.innerHTML = "$" + total;
+  // Check if a promo code is applied
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  let discount = 0;
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    const discountRate = promoCodes[promoCodeInput];
+    discount = subtotal * discountRate;
+  }
+
+  // Calculate final total
+  const finalTotal = subtotal - discount;
+
+  // Update the total price display
+  totalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
+
+  // Update the discount display (if you have a discount element)
+  const discountElement = document.getElementById("discount");
+  if (discountElement) {
+    discountElement.innerHTML = `-$${discount.toFixed(2)}`;
+  }
+
+  // Debugging: Log subtotal, discount, and final total
+  console.log("Subtotal:", subtotal);
+  console.log("Discount:", discount);
+  console.log("Final Total:", finalTotal);
+}
+
+// Promo codes and their discounts
+const promoCodes = {
+  ostad10: 0.1, // 10% discount
+  ostad5: 0.05, // 5% discount
+};
+
+// Function to apply promo code
+function applyPromoCode() {
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  const promoMessage = document.querySelector(".promo-message");
+
+  // Check if the promo code is valid
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    promoMessage.innerHTML = "Promo code applied successfully!";
+    promoMessage.style.color = "green";
+  } else {
+    // Invalid promo code
+    promoMessage.innerHTML = "Invalid promo code. Please try again.";
+    promoMessage.style.color = "red";
+  }
+
+  // Update the total to reflect the discount
+  updateTotal();
 }
 
 // ============= HTML COMPONENTS =============
@@ -253,80 +256,4 @@ function showNotification(productName, price) {
   setTimeout(() => {
     notification.remove();
   }, 3000);
-}
-
-//promo-code
-
-
-const promoCodes = {
-  ostad10: 0.1, // 10% discount
-  ostad5: 0.05, // 5% discount
-};
-
-// Function to apply promo code
-function applyPromoCode() {
-  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
-  const promoMessage = document.querySelector(".promo-message");
-  const discountElement = document.getElementById("discount");
-  const finalTotalElement = document.getElementById("final-total");
-  const subtotalElement = document.getElementById("subtotal");
-
- 
-  if (promoCodes.hasOwnProperty(promoCodeInput)) {
-    const discountRate = promoCodes[promoCodeInput];
-    const subtotal = parseFloat(subtotalElement.innerHTML.replace("$", ""));
-    const discount = subtotal * discountRate;
-    const finalTotal = subtotal - discount;
-
-
-    discountElement.innerHTML = `$${discount.toFixed(2)}`;
-    finalTotalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
-    promoMessage.innerHTML = "Promo code applied successfully!";
-    promoMessage.style.color = "green";
-  } else {
-  
-    promoMessage.innerHTML = "Invalid promo code. Please try again.";
-    promoMessage.style.color = "red";
-  }
-}
-
-
-document.getElementById("apply-promo-btn").addEventListener("click", applyPromoCode);
-
-
-function updateCartSummary() {
-  const subtotalElement = document.getElementById("subtotal");
-  const discountElement = document.getElementById("discount");
-  const finalTotalElement = document.getElementById("final-total");
-
-  let subtotal = 0;
-  document.querySelectorAll(".cart-box").forEach((cartBox) => {
-    const price = parseFloat(cartBox.querySelector(".cart-price").innerHTML.replace("$", ""));
-    const quantity = parseInt(cartBox.querySelector(".cart-quantity").value);
-    subtotal += price * quantity;
-  });
-
-  subtotalElement.innerHTML = `$${subtotal.toFixed(2)}`;
-
-  // Check if a promo code is applied
-  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
-  if (promoCodes.hasOwnProperty(promoCodeInput)) {
-    const discountRate = promoCodes[promoCodeInput];
-    const discount = subtotal * discountRate;
-    const finalTotal = subtotal - discount;
-
-    discountElement.innerHTML = `$${discount.toFixed(2)}`;
-    finalTotalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
-  } else {
-
-    discountElement.innerHTML = "$0.00";
-    finalTotalElement.innerHTML = `$${subtotal.toFixed(2)}`;
-  }
-}
-
-
-function update() {
-  addEvents();
-  updateTotal();
-  updateCartSummary(); // Add this line
 }
