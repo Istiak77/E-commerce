@@ -254,3 +254,79 @@ function showNotification(productName, price) {
     notification.remove();
   }, 3000);
 }
+
+//promo-code
+
+
+const promoCodes = {
+  ostad10: 0.1, // 10% discount
+  ostad5: 0.05, // 5% discount
+};
+
+// Function to apply promo code
+function applyPromoCode() {
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  const promoMessage = document.querySelector(".promo-message");
+  const discountElement = document.getElementById("discount");
+  const finalTotalElement = document.getElementById("final-total");
+  const subtotalElement = document.getElementById("subtotal");
+
+ 
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    const discountRate = promoCodes[promoCodeInput];
+    const subtotal = parseFloat(subtotalElement.innerHTML.replace("$", ""));
+    const discount = subtotal * discountRate;
+    const finalTotal = subtotal - discount;
+
+
+    discountElement.innerHTML = `$${discount.toFixed(2)}`;
+    finalTotalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
+    promoMessage.innerHTML = "Promo code applied successfully!";
+    promoMessage.style.color = "green";
+  } else {
+  
+    promoMessage.innerHTML = "Invalid promo code. Please try again.";
+    promoMessage.style.color = "red";
+  }
+}
+
+
+document.getElementById("apply-promo-btn").addEventListener("click", applyPromoCode);
+
+
+function updateCartSummary() {
+  const subtotalElement = document.getElementById("subtotal");
+  const discountElement = document.getElementById("discount");
+  const finalTotalElement = document.getElementById("final-total");
+
+  let subtotal = 0;
+  document.querySelectorAll(".cart-box").forEach((cartBox) => {
+    const price = parseFloat(cartBox.querySelector(".cart-price").innerHTML.replace("$", ""));
+    const quantity = parseInt(cartBox.querySelector(".cart-quantity").value);
+    subtotal += price * quantity;
+  });
+
+  subtotalElement.innerHTML = `$${subtotal.toFixed(2)}`;
+
+  // Check if a promo code is applied
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    const discountRate = promoCodes[promoCodeInput];
+    const discount = subtotal * discountRate;
+    const finalTotal = subtotal - discount;
+
+    discountElement.innerHTML = `$${discount.toFixed(2)}`;
+    finalTotalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
+  } else {
+
+    discountElement.innerHTML = "$0.00";
+    finalTotalElement.innerHTML = `$${subtotal.toFixed(2)}`;
+  }
+}
+
+
+function update() {
+  addEvents();
+  updateTotal();
+  updateCartSummary(); // Add this line
+}

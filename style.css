@@ -291,6 +291,43 @@ header{
 }
 
 
+/*Promo Section*/
+
+.promo-code-section {
+    margin: 10px 0;
+  }
+  
+  #promo-code-input {
+    padding: 5px;
+    margin-right: 10px;
+  }
+  
+  #apply-promo-btn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  #apply-promo-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .promo-message {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  .cart-summary {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  
+  .cart-summary p {
+    margin: 5px 0;
+  }
+
 /* ================ RESPONSIVE & BREAKPOINTS ============= */
 @media (max-width: 1080px){
     .nav{
@@ -330,3 +367,4 @@ header{
         width: 280px;
     }
 }
+
