@@ -28,7 +28,7 @@ function fetchProducts() {
   fetch("products.json")
     .then((response) => response.json())
     .then((data) => {
-      // Dynamically create product boxes
+      //create product boxes
       const shopContent = document.querySelector(".shop-content");
       data.forEach((product) => {
         const productBox = document.createElement("div");
@@ -45,7 +45,7 @@ function fetchProducts() {
         shopContent.appendChild(productBox);
       });
 
-      // Add event listeners after products are loaded
+
       addEvents();
     })
     .catch((error) => console.error("Error loading products:", error));
@@ -160,10 +160,9 @@ function handle_buyOrder() {
 // =========== CLEAR CART FUNCTION ===========
 function handle_clearCart() {
   const cartContent = cart.querySelector(".cart-content");
-  cartContent.innerHTML = ""; // Clear all items
-  itemsAdded = []; // Reset the cart items array
-  update(); // Update the UI
-}
+  cartContent.innerHTML = ""; 
+  itemsAdded = [];
+  update(); 
 
 // =========== UPDATE & RERENDER FUNCTIONS =========
 function updateTotal() {
@@ -193,13 +192,13 @@ function updateTotal() {
   // Update the total price display
   totalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
 
-  // Update the discount display (if you have a discount element)
+  // Update the discount display 
   const discountElement = document.getElementById("discount");
   if (discountElement) {
     discountElement.innerHTML = `-$${discount.toFixed(2)}`;
   }
 
-  // Debugging: Log subtotal, discount, and final total
+  // Debugging: Log 
   console.log("Subtotal:", subtotal);
   console.log("Discount:", discount);
   console.log("Final Total:", finalTotal);
@@ -207,8 +206,8 @@ function updateTotal() {
 
 // Promo codes and their discounts
 const promoCodes = {
-  ostad10: 0.1, // 10% discount
-  ostad5: 0.05, // 5% discount
+  ostad10: 0.1, 
+  ostad5: 0.05, 
 };
 
 // Function to apply promo code
@@ -221,12 +220,12 @@ function applyPromoCode() {
     promoMessage.innerHTML = "Promo code applied successfully!";
     promoMessage.style.color = "green";
   } else {
-    // Invalid promo code
+ 
     promoMessage.innerHTML = "Invalid promo code. Please try again.";
     promoMessage.style.color = "red";
   }
 
-  // Update the total to reflect the discount
+
   updateTotal();
 }
 
