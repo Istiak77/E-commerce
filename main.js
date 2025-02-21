@@ -45,7 +45,6 @@ function fetchProducts() {
         shopContent.appendChild(productBox);
       });
 
-
       addEvents();
     })
     .catch((error) => console.error("Error loading products:", error));
@@ -163,75 +162,74 @@ function handle_clearCart() {
   cartContent.innerHTML = "";
   itemsAdded = [];
   update();
+}
 
-  // =========== UPDATE & RERENDER FUNCTIONS =========
-  function updateTotal() {
-    let cartBoxes = document.querySelectorAll(".cart-box");
-    const totalElement = cart.querySelector(".total-price");
-    let subtotal = 0;
+// =========== UPDATE & RERENDER FUNCTIONS =========
+function updateTotal() {
+  let cartBoxes = document.querySelectorAll(".cart-box");
+  const totalElement = cart.querySelector(".total-price");
+  let subtotal = 0;
 
-    // Calculate subtotal
-    cartBoxes.forEach((cartBox) => {
-      let priceElement = cartBox.querySelector(".cart-price");
-      let price = parseFloat(priceElement.innerHTML.replace("$", ""));
-      let quantity = cartBox.querySelector(".cart-quantity").value;
-      subtotal += price * quantity;
-    });
+  // Calculate subtotal
+  cartBoxes.forEach((cartBox) => {
+    let priceElement = cartBox.querySelector(".cart-price");
+    let price = parseFloat(priceElement.innerHTML.replace("$", ""));
+    let quantity = cartBox.querySelector(".cart-quantity").value;
+    subtotal += price * quantity;
+  });
 
-    // Check if a promo code is applied
-    const promoCodeInput = document.getElementById("promo-code-input").value.trim();
-    let discount = 0;
-    if (promoCodes.hasOwnProperty(promoCodeInput)) {
-      const discountRate = promoCodes[promoCodeInput];
-      discount = subtotal * discountRate;
-    }
-
-    // Calculate final total
-    const finalTotal = subtotal - discount;
-
-    // Update the total price display
-    totalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
-
-    // Update the discount display 
-    const discountElement = document.getElementById("discount");
-    if (discountElement) {
-      discountElement.innerHTML = `-$${discount.toFixed(2)}`;
-    }
-
-    // Debugging: Log 
-    console.log("Subtotal:", subtotal);
-    console.log("Discount:", discount);
-    console.log("Final Total:", finalTotal);
+  // Check if a promo code is applied
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  let discount = 0;
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    const discountRate = promoCodes[promoCodeInput];
+    discount = subtotal * discountRate;
   }
 
-  // Promo codes and their discounts
-  const promoCodes = {
-    ostad10: 0.1,
-    ostad5: 0.05,
-  };
+  // Calculate final total
+  const finalTotal = subtotal - discount;
 
-  // Function to apply promo code
-  function applyPromoCode() {
-    const promoCodeInput = document.getElementById("promo-code-input").value.trim();
-    const promoMessage = document.querySelector(".promo-message");
+  // Update the total price display
+  totalElement.innerHTML = `$${finalTotal.toFixed(2)}`;
 
-    // Check if the promo code is valid
-    if (promoCodes.hasOwnProperty(promoCodeInput)) {
-      promoMessage.innerHTML = "Promo code applied successfully!";
-      promoMessage.style.color = "green";
-    } else {
-
-      promoMessage.innerHTML = "Invalid promo code. Please try again.";
-      promoMessage.style.color = "red";
-    }
-
-
-    updateTotal();
+  // Update the discount display 
+  const discountElement = document.getElementById("discount");
+  if (discountElement) {
+    discountElement.innerHTML = `-$${discount.toFixed(2)}`;
   }
 
-  // ============= HTML COMPONENTS =============
-  function CartBoxComponent(title, price, imgSrc) {
-    return `
+  // Debugging: Log 
+  console.log("Subtotal:", subtotal);
+  console.log("Discount:", discount);
+  console.log("Final Total:", finalTotal);
+}
+
+// Promo codes and their discounts
+const promoCodes = {
+  ostad10: 0.1,
+  ostad5: 0.05,
+};
+
+// Function to apply promo code
+function applyPromoCode() {
+  const promoCodeInput = document.getElementById("promo-code-input").value.trim();
+  const promoMessage = document.querySelector(".promo-message");
+
+  // Check if the promo code is valid
+  if (promoCodes.hasOwnProperty(promoCodeInput)) {
+    promoMessage.innerHTML = "Promo code applied successfully!";
+    promoMessage.style.color = "green";
+  } else {
+    promoMessage.innerHTML = "Invalid promo code. Please try again.";
+    promoMessage.style.color = "red";
+  }
+
+  updateTotal();
+}
+
+// ============= HTML COMPONENTS =============
+function CartBoxComponent(title, price, imgSrc) {
+  return `
     <div class="cart-box">
         <img src=${imgSrc} alt="" class="cart-img">
         <div class="detail-box">
@@ -242,17 +240,17 @@ function handle_clearCart() {
         <!-- REMOVE CART  -->
         <i class='bx bxs-trash-alt cart-remove'></i>
     </div>`;
-  }
+}
 
-  // ============= NOTIFICATION FUNCTION =============
-  function showNotification(productName, price) {
-    let notification = document.createElement("div");
-    notification.classList.add("notification");
-    notification.innerText = ${ productName } added to cart($${ price });
+// ============= NOTIFICATION FUNCTION =============
+function showNotification(productName, price) {
+  let notification = document.createElement("div");
+  notification.classList.add("notification");
+  notification.innerText = `${productName} added to cart($${price})`;
 
-    document.body.appendChild(notification);
+  document.body.appendChild(notification);
 
-    setTimeout(() => {
-      notification.remove();
-    }, 3000);
-  }
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
